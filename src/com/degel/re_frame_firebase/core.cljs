@@ -9,9 +9,12 @@
 ;;; Used mostly to register client handlers
 (defonce firebase-state (atom {}))
 
-(defn set-firebase-state [& {:keys [get-user-sub set-user-event default-error-handler]}]
+(defn set-firebase-state [& {:keys [get-user-sub set-user-event 
+                                    redirect-result-event
+                                    default-error-handler]}]
   (swap! firebase-state assoc
          :set-user-fn           (event->fn set-user-event)
+         :redirect-result-fn    (event->fn redirect-result-event)
          :get-user-fn           (sub->fn get-user-sub)
          :default-error-handler (event->fn (or default-error-handler js/alert))))
 
@@ -27,6 +30,10 @@
 
 (defn set-current-user [user]
   (when-let [handler (:set-user-fn @firebase-state)]
+    (handler user)))
+
+(defn redirect-result [user]
+  (when-let [handler (:redirect-result-fn @firebase-state)]
     (handler user)))
 
 (defn default-error-handler []

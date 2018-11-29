@@ -41,7 +41,8 @@
       (.then (fn on-user-credential [user-credential]
                (-> user-credential
                    (.-user)
-                   set-user)))
+                   (user)
+                   (core/redirect-result))))
       (.catch (core/default-error-handler))))
 
 (def ^:private sign-in-fns

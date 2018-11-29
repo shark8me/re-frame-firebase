@@ -384,9 +384,11 @@
                       firestore-settings
                       get-user-sub
                       set-user-event
+                      redirect-result-event
                       default-error-handler]}]
   (core/set-firebase-state :get-user-sub          get-user-sub
                            :set-user-event        set-user-event
+                           :redirect-result-event redirect-result-event
                            :default-error-handler default-error-handler)
   (core/initialize-app firebase-app-info)
   (firestore/set-firestore-settings firestore-settings)

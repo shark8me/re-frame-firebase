@@ -9,6 +9,6 @@
 (s/def ::path (s/coll-of (s/or :string string? :keyword keyword?) :into []))
 
 ;; Firestore
-(s/def ::path-collection (s/and ::path #(odd? (count %))))
+(s/def ::path-collection ::path)
 
-(s/def ::path-document (s/and ::path #(even? (count %))))
+(s/def ::path-document ::path)
