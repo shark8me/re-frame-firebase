@@ -4,7 +4,7 @@
 (ns com.degel.re-frame-firebase.core
   (:require
    [iron.re-utils :refer [<sub >evt event->fn sub->fn]]
-   [firebase.app :as firebase-app]))
+   ["firebase/app" :default firebase]))
 
 ;;; Used mostly to register client handlers
 (defonce firebase-state (atom {}))
@@ -12,14 +12,18 @@
 (defn set-firebase-state [& {:keys [get-user-sub set-user-event 
                                     redirect-result-event
                                     default-error-handler]}]
+  (println " set-fb-state "
+           [get-user-sub set-user-event
+            redirect-result-event
+            default-error-handler])
   (swap! firebase-state assoc
          :set-user-fn           (event->fn set-user-event)
-         :redirect-result-fn    (event->fn redirect-result-event)
+         ;;:redirect-result-fn    (event->fn redirect-result-event)
          :get-user-fn           (sub->fn get-user-sub)
          :default-error-handler (event->fn (or default-error-handler js/alert))))
 
 (defn initialize-app [firebase-app-info]
-  (js/firebase.initializeApp (clj->js firebase-app-info)))
+  (.initializeApp firebase (clj->js firebase-app-info)))
 
 ;;; [TODO] Consider adding a default atom to hold the user state when :get-user-fn and
 ;;; and :set-user-fn are not defined. Need to do this carefully, so as not to cause any

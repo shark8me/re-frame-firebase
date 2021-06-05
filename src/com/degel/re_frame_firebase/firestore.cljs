@@ -6,8 +6,8 @@
    [reagent.ratom :as ratom :refer [make-reaction]]
    [iron.re-utils :as re-utils :refer [<sub >evt event->fn sub->fn]]
    [iron.utils :as utils]
-   [firebase.app :as firebase-app]
-   [firebase.firestore :as firebase-firestore]
+   ["firebase/app" :default firebase]
+   ["firebase/firestore" :as firebase-firestore]
    [com.degel.re-frame-firebase.core :as core]
    [com.degel.re-frame-firebase.specs :as specs]
    [com.degel.re-frame-firebase.helpers :refer [promise-wrapper]]))
@@ -15,7 +15,7 @@
 
 (defn set-firestore-settings
   [settings]
-  (.settings (js/firebase.firestore) (clj->js (or settings {}))))
+  (.settings (.firestore firebase) (clj->js (or settings {}))))
 
 ;; Extra public functions
 (defn server-timestamp
@@ -51,7 +51,7 @@
   {:firestore/get {:path-collection [:my-collection]
                    :where [[(document-id-field-path) :>= \"start\"]]}}"
   []
-  (.documentId firebase.firestore.FieldPath))
+  (.documentId js/firebase.firestore.FieldPath))
 
 
 ;; Type Conversion/Parsing
@@ -61,9 +61,9 @@
   See https://firebase.google.com/docs/reference/js/firebase.firestore.CollectionReference"
   [path]
   {:pre [(utils/validate ::specs/path-collection path)]}
-  (if (instance? js/firebase.firestore.CollectionReference path)
+  (if (instance? (.-CollectionReference (.-firestore firebase)) path)
     path
-    (.collection (js/firebase.firestore)
+    (.collection (.firestore firebase)
                  (str/join "/" (clj->js path)))))
 
 (defn clj->DocumentReference
@@ -72,9 +72,9 @@
   See https://firebase.google.com/docs/reference/js/firebase.firestore.DocumentReference"
   [path]
   {:pre [(utils/validate ::specs/path-document path)]}
-  (if (instance? js/firebase.firestore.DocumentReference path)
+  (if (instance? (.-DocumentReference (.-firestore firebase))  path)
     path
-    (.doc (js/firebase.firestore)
+    (.doc (.firestore firebase)
           (str/join "/" (clj->js path)))))
 
 (defn clj->FieldPath
