@@ -3,6 +3,10 @@
 [Re-frame](https://github.com/Day8/re-frame) wrapper around Google's
 [Firebase](https://firebase.google.com) database.
 
+## Update
+
+This is a work-inprogress fork to handle import of firebase via shadow-cljs instead of cljsjs
+
 
 ## Overview
 
