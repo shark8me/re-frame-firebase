@@ -85,42 +85,44 @@
 
 (defn facebook-sign-in
   [opts]
-  (oauth-sign-in (js/firebase.auth.FacebookAuthProvider.) opts))
+  (oauth-sign-in (new (.-FacebookAuthProvider (.-auth firebase)))  opts))
 
 
 (defn twitter-sign-in
   [opts]
-  (oauth-sign-in (js/firebase.auth.TwitterAuthProvider.) opts))
+  (oauth-sign-in (new (.-TwitterAuthProvider (.-auth firebase)))
+                  opts))
 
 
 (defn github-sign-in
   [opts]
-  (oauth-sign-in (js/firebase.auth.GithubAuthProvider.) opts))
+  (oauth-sign-in (new (.-GithubAuthProvider (.-auth firebase)))
+                  opts))
 
 
 (defn email-sign-in [{:keys [email password]}]
-  (-> (js/firebase.auth)
+  (-> (.auth firebase)
       (.signInWithEmailAndPassword email password)
       (.then set-user)
       (.catch (core/default-error-handler))))
 
 
 (defn email-create-user [{:keys [email password]}]
-  (-> (js/firebase.auth)
+  (-> (.auth firebase)
       (.createUserWithEmailAndPassword email password)
       (.then set-user)
       (.catch (core/default-error-handler))))
 
 
 (defn anonymous-sign-in [opts]
-  (-> (js/firebase.auth)
+  (-> (.auth firebase)
       (.signInAnonymously)
       (.then set-user)
       (.catch (core/default-error-handler))))
 
 
 (defn custom-token-sign-in [{:keys [token]}]
-  (-> (js/firebase.auth)
+  (-> (.auth firebase)
       (.signInWithCustomToken token)
       (.then set-user)
       (.catch (core/default-error-handler))))
@@ -137,7 +139,7 @@
 
 (defn phone-number-sign-in [{:keys [phone-number on-send]}]
   (if-let [verifier (:recaptcha-verifier @core/firebase-state)]
-    (-> (js/firebase.auth)
+    (-> (.auth firebase)
         (.signInWithPhoneNumber phone-number verifier)
         (.then (fn [confirmation]
                  (when on-send

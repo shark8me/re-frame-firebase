@@ -28,7 +28,7 @@
                    :data {:name \"document-with-timestamp\"
                           :timestamp (server-timestamp)}}"
   []
-  (.serverTimestamp js/firebase.firestore.FieldValue))
+  (.serverTimestamp (.-FieldValue (.-firestore firebase))))
 
 (defn delete-field-value
   "Returns a field value to be used to delete a field.
@@ -40,7 +40,7 @@
   {:firestore/update {:path [:my \"document\"]
                       :data {:field-to-delete (delete-field-value)}}}"
   []
-  (.delete js/firebase.firestore.FieldValue))
+  (.delete (.-FieldValue (.-firestore firebase))))
 
 (defn document-id-field-path
   "Returns a field path which can be used to refer to ID of a document.
@@ -51,7 +51,7 @@
   {:firestore/get {:path-collection [:my-collection]
                    :where [[(document-id-field-path) :>= \"start\"]]}}"
   []
-  (.documentId js/firebase.firestore.FieldPath))
+  (.documentId (.-FieldPath (.-firestore firebase))))
 
 
 ;; Type Conversion/Parsing
@@ -86,9 +86,9 @@
   [field-path]
   (cond
     (nil? field-path) nil
-    (instance? js/firebase.firestore.FieldPath field-path) field-path
-    (coll? field-path) (apply js/firebase.firestore.FieldPath. (clj->js field-path))
-    :else (js/firebase.firestore.FieldPath. (clj->js field-path))))
+    (instance? (.-FieldPath (.-firestore firebase)) field-path) field-path
+    (coll? field-path) (apply (new (.-FieldPath (.-firestore firebase))) (clj->js field-path))
+    :else (new (.-FieldPath (.-firestore firebase)) (clj->js field-path))))
 
 (defn clj->SetOptions
   "Converts a clojure-style map into a SetOptions satisfying one.
@@ -261,7 +261,7 @@
   (promise-wrapper (deleter path) on-success on-failure))
 
 (defn- write-batch-effect [{:keys [operations on-success on-failure]}]
-  (let [batch-instance (.batch (js/firebase.firestore))]
+  (let [batch-instance (.batch (.firestore firebase))]
     (run! (fn [[event-type {:keys [path data set-options]}]]
             (case event-type
               :firestore/delete (deleter batch-instance path)

@@ -12,10 +12,6 @@
 (defn set-firebase-state [& {:keys [get-user-sub set-user-event 
                                     redirect-result-event
                                     default-error-handler]}]
-  (println " set-fb-state "
-           [get-user-sub set-user-event
-            redirect-result-event
-            default-error-handler])
   (swap! firebase-state assoc
          :set-user-fn           (event->fn set-user-event)
          ;;:redirect-result-fn    (event->fn redirect-result-event)
